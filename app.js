@@ -5,7 +5,7 @@ const userRoutes = require('./routes/intervention');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://vincenthebert37:HyDD3N77@cluster0.srplcuy.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://vincent:HyDD3N77@cluster0.fhsjkn0.mongodb.net/?retryWrites=true&w=majority',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
