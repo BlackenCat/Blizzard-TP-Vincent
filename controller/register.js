@@ -1,29 +1,49 @@
+const bcrypt = require('bcrypt');
 const Agent = require("../model/Agent");
+const jwt = require('jsonwebtoken');
 
-exports.createAgent = (req, res, next) => {
+eexports.signup = (req, res, next) => {
 
-    delete req.body._id;
+    bcrypt.hash(req.body.password,10)
+        .then(hash =>{
+            const user = new User({
+                numAgent,
+                grade,
+                password: hash
+            });
+            user.save()
+                .then(() => {
+                    res.status(201).json({message: "Agent créé !"})
+                } )
+                .catch(error => res.status(400).json({ error } ));
+        })
 
-    const agent = new Agent({
-        ...req.body
-    });
 
-    Agent.save()
-        .then(() => res.status(201).json({ message: "Compte d'agent créé !!" }) )
+}
+exports.login = (req, res, next) => {
+
+    User.findOne({numAgent:req.body.numAgent})
+        .then(user => {
+            if (!agent){
+                return res.status(401).json({message:"Paire log/mdp incorrecte"})
+            }
+            bcrypt.compare(req.body.password, agent.password)
+                .then(valid => {
+                    if (!valid){
+                        return res.status(401).json({message:"Paire log/mdp incorrecte"})
+                    }
+                    res.status(200).json({
+                        userId:agent._id,
+                        token: jwt.sign(
+                            {agentId: agent._id},
+                            'RANDOM_TOKEN_SECRET',
+                            {expiresIn: '24h'}
+                        )
+                    })
+                })
+                .catch(error => res.status(500).json({ error } ));
+        })
         .catch(error => res.status(400).json({ error } ));
 
-}
-exports.getOneAgent = (req, res, next) => {
-
-    Agent.findById(req.params.id)
-        .then(agent => res.status(200).json(agent))
-        .catch(error => res.status(400).json({ message:"Agent introuvable" }))
-
-}
-exports.updateAgent = (req, res, next) => {
-
-    Agent.updateOne({_id: req.params.id }, { ...req.body, _id: req.params.id } )
-        .then(() => res.status(200).json({ message: "Agent modifié !" }))
-        .catch(error => res.status(400).json({ message: "Pas autorisé !" } ))
 
 }
